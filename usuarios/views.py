@@ -6,4 +6,4 @@ from django.shortcuts import render
 
 
 def cadastro(request):
-    return HttpResponse("Bem vindo ao sistema petCare")
+    return render(request,'cadastro.html')

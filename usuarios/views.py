@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib import auth
 
+from .models import Cliente
+
+
 def cadastro(request):
     if request.method == 'GET':
         return render(request, 'cadastro.html')
@@ -35,6 +38,7 @@ def cadastro(request):
         return redirect('login')
 
 def login(request):
+
     if request.method == 'GET':
         return render(request, 'login.html')
     elif request.method == 'POST':
@@ -48,3 +52,43 @@ def login(request):
         else:
             messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos.')
         return redirect('login')
+
+def clientes(request):
+    if request.method == 'GET':
+        tipo = request.GET.get('tipo')
+
+        clientes = Cliente.objects.all()
+        if tipo:
+          clientes = clientes.filter(especie=tipo.upper())
+        return render(request, 'clientes.html', {'clientes': clientes})
+    elif request.method == 'POST':
+        nome = request.POST.get('nome')
+        cpf = request.POST.get('cpf')
+        telefone = request.POST.get('telefone')
+        especie = request.POST.get('especie')
+        nome_animal = request.POST.get('nome_animal')
+        raca = request.POST.get('raca')
+        idade = request.POST.get('idade')
+        peso = request.POST.get('peso')
+
+        cliente = Cliente(
+            nome=nome,
+            cpf=cpf,
+            telefone=telefone,
+            especie=especie,
+            nome_animal=nome_animal,
+            raca=raca,
+            idade=idade,
+            peso=peso,
+            tipo=tipo
+        )
+        cliente.save()
+        messages.add_message(request, constants.SUCCESS, 'Cliente cadastrado com sucesso.')
+        return redirect('clientes')
+    else:
+        messages.add_message(request, constants.ERROR, 'Erro ao cadastrar cliente.')
+        return redirect('clientes')
+
+
+
+
